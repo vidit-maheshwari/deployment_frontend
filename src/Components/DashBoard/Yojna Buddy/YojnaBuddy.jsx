@@ -210,130 +210,141 @@
 
 
 
-import React, { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
-import { useUser } from '@clerk/clerk-react'; // Import your user hook
-import ReactMarkdown from 'react-markdown';
+// import React, { useState, useEffect, useRef } from 'react';
+// import axios from 'axios';
+// import { useUser } from '@clerk/clerk-react'; // Import your user hook
+// import ReactMarkdown from 'react-markdown';
 
-const YojnaBuddy = () => {
-  const [messages, setMessages] = useState([]);
-  const [input, setInput] = useState('');
-  const [username, setUsername] = useState('');
-  const messagesEndRef = useRef(null);
-  const [userResponses, setUserResponses] = useState([]); // State to hold user responses
+// const YojnaBuddy = () => {
+//   const [messages, setMessages] = useState([]);
+//   const [input, setInput] = useState('');
+//   const [username, setUsername] = useState('');
+//   const messagesEndRef = useRef(null);
+//   const [userResponses, setUserResponses] = useState([]); // State to hold user responses
 
-  const { user } = useUser();
+//   const { user } = useUser();
 
-  useEffect(() => {
-    if (user) {
-      setUsername(user.fullName || user.username || user.firstName);
-      fetchUserResponses(user.id); // Fetch user responses when user is available
-    }
-  }, [user]);
+//   useEffect(() => {
+//     if (user) {
+//       setUsername(user.fullName || user.username || user.firstName);
+//       fetchUserResponses(user.id); // Fetch user responses when user is available
+//     }
+//   }, [user]);
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+//   useEffect(() => {
+//     scrollToBottom();
+//   }, [messages]);
 
-  const fetchUserResponses = async (userId) => {
-    try {
-      const response = await axios.get(`https://backendalgora.onrender.com/quizResults/${userId}/responses`); // Replace with your API endpoint for fetching responses
-      setUserResponses(response.data); // Assuming response.data contains user responses
-    } catch (error) {
-      console.error('Error fetching user responses:', error);
-    }
-  };
+//   const fetchUserResponses = async (userId) => {
+//     try {
+//       const response = await axios.get(`https://backendalgora.onrender.com/quizResults/${userId}/responses`); // Replace with your API endpoint for fetching responses
+//       setUserResponses(response.data); // Assuming response.data contains user responses
+//     } catch (error) {
+//       console.error('Error fetching user responses:', error);
+//     }
+//   };
 
-  const handleSend = async () => {
-    if (!input.trim()) return;
+//   const handleSend = async () => {
+//     if (!input.trim()) return;
 
-    const userMessage = { text: input, sender: username, isUser: true };
-    setMessages(prevMessages => [...prevMessages, userMessage]); // Update messages using functional update form
+//     const userMessage = { text: input, sender: username, isUser: true };
+//     setMessages(prevMessages => [...prevMessages, userMessage]); // Update messages using functional update form
 
-    try {
-      const response = await axios.post('http://127.0.0.1:5001/output', { prompt: input }); // Replace with your API endpoint for sending messages
-      const botMessage = { text: response.data.output, sender: 'YojnaBot', isUser: false };
-      setMessages(prevMessages => [...prevMessages, botMessage]); // Update messages using functional update form
-    } catch (error) {
-      console.error('Error fetching response:', error);
-      const errorMessage = { text: 'Error fetching response. Please try again.', sender: 'YojnaBot', isUser: false };
-      setMessages(prevMessages => [...prevMessages, errorMessage]); // Update messages using functional update form
-    }
+//     try {
+//       const response = await axios.post('https://flaskapi-9103.onrender.com', { prompt: input }); // Replace with your API endpoint for sending messages
+//       const botMessage = { text: response.data.output, sender: 'YojnaBot', isUser: false };
+//       setMessages(prevMessages => [...prevMessages, botMessage]); // Update messages using functional update form
+//     } catch (error) {
+//       console.error('Error fetching response:', error);
+//       const errorMessage = { text: 'Error fetching response. Please try again.', sender: 'YojnaBot', isUser: false };
+//       setMessages(prevMessages => [...prevMessages, errorMessage]); // Update messages using functional update form
+//     }
 
-    setInput('');
-  };
+//     setInput('');
+//   };
 
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      handleSend();
-    }
-  };
+//   const handleKeyPress = (e) => {
+//     if (e.key === 'Enter') {
+//       handleSend();
+//     }
+//   };
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
+//   const scrollToBottom = () => {
+//     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+//   };
 
+//   return (
+//     <div className="flex flex-col h-screen bg-gray-100 p-4">
+//       <div className="flex-grow overflow-y-auto p-4 bg-white shadow-lg rounded-lg">
+//         {/* Display user responses if available */}
+//         {userResponses.length > 0 && (
+//           <div className="p-3 rounded-lg bg-gray-300 text-black mb-2">
+//             <strong>User Responses:</strong>
+//             <ul>
+//               {userResponses.map((responseSet, setIndex) => (
+//                 <div key={setIndex}>
+//                   {responseSet.map((response, index) => (
+//                     <li key={index}>
+//                       <strong>{response.question}</strong>: {response.selectedOption}
+//                     </li>
+//                   ))}
+//                 </div>
+//               ))}
+//             </ul>
+//           </div>
+//         )}
+
+//         {/* Display chat messages */}
+//         {messages.map((message, index) => (
+//           <div
+//             key={index}
+//             className={`flex my-2 ${message.isUser ? 'justify-end' : 'justify-start'}`}
+//           >
+//             <div
+//               className={`p-3 rounded-lg max-w-3xl w-full ${
+//                 message.isUser ? 'bg-blue-500 text-white' : 'bg-gray-300 text-black'
+//               }`}
+//             >
+//               <strong>{message.sender}: </strong>
+//               <ReactMarkdown>{message.text}</ReactMarkdown>
+//             </div>
+//           </div>
+//         ))}
+//         <div ref={messagesEndRef} />
+//       </div>
+//       <div className="mt-4 flex">
+//         <input
+//           type="text"
+//           value={input}
+//           onChange={(e) => setInput(e.target.value)}
+//           onKeyPress={handleKeyPress}
+//           className="flex-grow p-2 border border-gray-300 rounded-l-md"
+//           placeholder="Type a message..."
+//         />
+//         <button onClick={handleSend} className="p-2 bg-blue-500 text-white rounded-r-md">
+//           Send
+//         </button>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default YojnaBuddy;
+
+
+
+
+import React from 'react'
+
+function YojnaBuddy() {
   return (
-    <div className="flex flex-col h-screen bg-gray-100 p-4">
-      <div className="flex-grow overflow-y-auto p-4 bg-white shadow-lg rounded-lg">
-        {/* Display user responses if available */}
-        {userResponses.length > 0 && (
-          <div className="p-3 rounded-lg bg-gray-300 text-black mb-2">
-            <strong>User Responses:</strong>
-            <ul>
-              {userResponses.map((responseSet, setIndex) => (
-                <div key={setIndex}>
-                  {responseSet.map((response, index) => (
-                    <li key={index}>
-                      <strong>{response.question}</strong>: {response.selectedOption}
-                    </li>
-                  ))}
-                </div>
-              ))}
-            </ul>
-          </div>
-        )}
-
-        {/* Display chat messages */}
-        {messages.map((message, index) => (
-          <div
-            key={index}
-            className={`flex my-2 ${message.isUser ? 'justify-end' : 'justify-start'}`}
-          >
-            <div
-              className={`p-3 rounded-lg max-w-3xl w-full ${
-                message.isUser ? 'bg-blue-500 text-white' : 'bg-gray-300 text-black'
-              }`}
-            >
-              <strong>{message.sender}: </strong>
-              <ReactMarkdown>{message.text}</ReactMarkdown>
-            </div>
-          </div>
-        ))}
-        <div ref={messagesEndRef} />
-      </div>
-      <div className="mt-4 flex">
-        <input
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyPress={handleKeyPress}
-          className="flex-grow p-2 border border-gray-300 rounded-l-md"
-          placeholder="Type a message..."
-        />
-        <button onClick={handleSend} className="p-2 bg-blue-500 text-white rounded-r-md">
-          Send
-        </button>
-      </div>
+    <div>
+      <h1 className='text-2xl font-bold'>Yojna Buddy. Coming soon</h1>
     </div>
-  );
-};
+  )
+}
 
-export default YojnaBuddy;
-
-
-
-
+export default YojnaBuddy
 
 
 
