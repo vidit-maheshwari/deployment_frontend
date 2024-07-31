@@ -40,7 +40,7 @@ import AdvancedModule1Hindi from './Components/DashBoard/Learn/Modules/Advanced/
 
 
 
-const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
+const PUBLISHABLE_KEY = "pk_test_ZGl2ZXJzZS1zZWFndWxsLTEuY2xlcmsuYWNjb3VudHMuZGV2JA"
 
 if (!PUBLISHABLE_KEY) {
   throw new Error('Missing Publishable Key');
